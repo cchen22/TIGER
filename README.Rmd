@@ -35,9 +35,9 @@ Then, you can use cmdstanr to install [CmdStan](https://mc-stan.org/users/interf
 ``` r
 install_cmdstan()
 ```
-These two steps are usually enough is your C++ toolchain is set up properly. For example, use RTools 4.0 toolchain which contains a g++ 8 compiler and mingw32-make on Windows platform. If you see problems with installation, you can go to cmdstanr [installation](https://mc-stan.org/cmdstanr/articles/cmdstanr.html) for more information.     
+These two steps are usually enough if your C++ toolchain is set up properly. For example, use RTools 4.0 toolchain which contains a g++ 8 compiler and mingw32-make on Windows platform. If you see problems with installation, you can go to cmdstanr [installation](https://mc-stan.org/cmdstanr/articles/cmdstanr.html) for more information.     
 
-After cmdstan is correctly installed, you can install the development version of TIGER from [GitHub](https://github.com/) with:
+After cmdstan is correctly installed, you can install the development version of TIGER with:
 ``` r
 devtools::install_github("cchen22/TIGER")
 ```
