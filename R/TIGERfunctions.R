@@ -1,6 +1,12 @@
-## TGIER Package for
+## ---------------------------
+## Project name: TIGER
+## Purpose of script: source code
 ## Author: Chen Chen
-## Date: 09/30/2022
+## Date Created: 2022-10-05
+##
+## Copyright (c) Chen Chen, 2022
+## Email: cchen22@arizona.edu
+
 
 
 # # install cmdstanr and cmdstan
