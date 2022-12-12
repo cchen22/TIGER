@@ -25,3 +25,5 @@ Suggests:
 VignetteBuilder: knitr
 URL: https://github.com/cchen22/TIGER
 BugReports: https://github.com/cchen22/TIGER/issues
+Depends: 
+    R (>= 2.10)

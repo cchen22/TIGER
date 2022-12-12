@@ -10,7 +10,7 @@ TIGER(
   method = "VB",
   signed = TRUE,
   baseline = TRUE,
-  psis_loo = TRUE,
+  psis_loo = FALSE,
   seed = 123,
   out_path = NULL,
   out_size = 300,

@@ -52,7 +52,7 @@
 #'
 #' @examples
 TIGER = function(expr,prior,method="VB",
-                     signed=TRUE,baseline=TRUE,psis_loo = TRUE,
+                     signed=TRUE,baseline=TRUE,psis_loo = FALSE,
                      seed=123,out_path=NULL,out_size = 300,
                      a_sigma=1,b_sigma=1,a_alpha=1,b_alpha=1,sigmaZ=10,sigmaB=1){
   # check data
@@ -66,8 +66,10 @@ TIGER = function(expr,prior,method="VB",
   #0. prepare stan input
   if (signed){
     prior = prior.pp(prior[TF.name,TG.name],expr)
+    P = prior
+  }else{
+    P = prior[TF.name,TG.name]
   }
-  P = prior[TF.name,TG.name] ## row=TF, col=TG
   X = expr[TG.name,]
   n_genes = dim(X)[1]
   n_samples = dim(X)[2]
