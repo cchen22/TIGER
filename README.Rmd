@@ -2,28 +2,14 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
-
 # TIGER
-
-<!-- badges: start -->
-<!-- badges: end -->
 
 ## Introduction
 The goal of TIGER is to estimate gene regulatory network and transcription factor 
 activities using Bayesian matrix factorization.        
 ![](TIGER.png)<!-- -->              
 Please read and cite the following article when you use TIGER:     
-Joint inference of transcription factor activity and context-specific regulatory networks, Chen&Padi 2022
+[Joint inference of transcription factor activity and context-specific regulatory networks, Chen&Padi 2022](https://www.biorxiv.org/content/10.1101/2022.12.12.520141v1)
 
 ## Installation
 
@@ -62,7 +48,6 @@ ss = TIGER(expr,prior)
 ##3. print the TFA score in first three samples
 tgres = ss$Z
 tgres[,1:3]
-
 ```
 
 ## Wokring with DoRothEA prior
@@ -79,6 +64,5 @@ df = dorothea::dorothea_hs_pancancer
 
 ## convert it to TIGER prior format (e.g., adjacency matrix) 
 prior = el2adj(df[,-2])
-
 ```
 
