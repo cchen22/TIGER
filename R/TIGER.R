@@ -67,6 +67,8 @@ TIGER = function(expr,prior,method="VB",
   if (signed){
     prior = prior.pp(prior[TF.name,TG.name],expr)
     P = prior
+    TF.name = rownames(P)
+    TG.name = colnames(P)
   }else{
     P = prior[TF.name,TG.name]
   }
