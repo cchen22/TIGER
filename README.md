@@ -26,7 +26,7 @@ Then, you can use cmdstanr to install
 interface to [Stan](https://mc-stan.org/) with
 
 ``` r
-install_cmdstan()
+cmdstanr::install_cmdstan()
 ```
 
 These two steps are usually enough if your C++ toolchain is set up
@@ -70,8 +70,8 @@ ss = TIGER(expr,prior)
     ##   This procedure has not been thoroughly tested and may be unstable 
     ##   or buggy. The interface is subject to change. 
     ## ------------------------------------------------------------ 
-    ## Gradient evaluation took 0.008 seconds 
-    ## 1000 transitions using 10 leapfrog steps per transition would take 80 seconds. 
+    ## Gradient evaluation took 0.003798 seconds 
+    ## 1000 transitions using 10 leapfrog steps per transition would take 37.98 seconds. 
     ## Adjust your expectations accordingly! 
     ## Begin eta adaptation. 
     ## Iteration:   1 / 250 [  0%]  (Adaptation) 
@@ -108,7 +108,7 @@ ss = TIGER(expr,prior)
     ##   2300       -46991.764             0.392            0.004   MEDIAN ELBO CONVERGED 
     ## Drawing a sample of size 300 from the approximate posterior...  
     ## COMPLETED. 
-    ## Finished in  75.3 seconds.
+    ## Finished in  35.4 seconds.
 
 ``` r
 ##3. print the TFA score in first three samples

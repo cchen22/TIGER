@@ -71,3 +71,6 @@ density, which can be used for Bayesian stacking to handle multi-modality later.
 \description{
 TIGER main function
 }
+\examples{
+TIGER(expr,prior)
+}

@@ -6,3 +6,6 @@
 inst/doc
 README.Rmd
 rmd2jupyter.R
+build_up_pkg.R
+LICENSE.md
+TIGER.ipynb

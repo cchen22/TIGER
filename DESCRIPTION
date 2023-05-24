@@ -8,12 +8,11 @@ Authors@R:
            email = "chenchen9945@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Estimating regulatory network and transcription factor activities in bulk and single-cell RNAseq data using Bayesian matrix factorization.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
     cmdstanr (>= 0.5.3),
     GeneNet (>= 1.2.16),

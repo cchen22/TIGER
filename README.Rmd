@@ -20,7 +20,7 @@ install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOpt
 ```
 Then, you can use cmdstanr to install [CmdStan](https://mc-stan.org/users/interfaces/cmdstan.html), the shell interface to [Stan](https://mc-stan.org/) with
 ``` {r,eval=FALSE}
-install_cmdstan()
+cmdstanr::install_cmdstan()
 ```
 These two steps are usually enough if your C++ toolchain is set up properly. For example, use RTools 4.0 toolchain which contains a g++ 8 compiler and mingw32-make on Windows platform. If you see problems with installation, you can go to cmdstanr [installation](https://mc-stan.org/cmdstanr/articles/cmdstanr.html) for more information.     
 
