@@ -26,6 +26,7 @@
 #' @param prior A prior regulatory network in adjacency matrix format. Rows are TFs
 #' and columns target genes.
 #' @param method Method used for Bayesian inference. "VB" or "MCMC". Defaults to "VB".
+#' @param TFexpressed TF mRNA needs to be expressed or not. Defaults to TRUE.
 #' @param signed Prior network is signed or not. Defaults to TRUE.
 #' @param baseline Include baseline or not. Defaults to TRUE.
 #' @param psis_loo Use pareto smoothed importance sampling leave-one-out cross
@@ -52,22 +53,31 @@
 #'
 #' @examples
 #' TIGER(expr,prior)
-TIGER = function(expr,prior,method="VB",
+TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
                      signed=TRUE,baseline=TRUE,psis_loo = FALSE,
                      seed=123,out_path=NULL,out_size = 300,
                      a_sigma=1,b_sigma=1,a_alpha=1,b_alpha=1,sigmaZ=10,sigmaB=1){
   # check data
   sample.name = colnames(expr)
-  TF.name = intersect(rownames(prior),rownames(expr)) # TF needs to express
-  TG.name = intersect(rownames(expr),colnames(prior))
+  if (TFexpressed){
+    TF.name = sort(intersect(rownames(prior),rownames(expr))) # TF needs to express
+  }else{
+    TF.name = sort(rownames(prior))
+  }
+  TG.name = sort(intersect(rownames(expr),colnames(prior)))
   if (length(TG.name)==0 | length(TF.name)==0){
     stop("No matched gene names in the two inputs...")
   }
 
   #0. prepare stan input
   if (signed){
-    prior = prior.pp(prior[TF.name,TG.name],expr)
-    P = prior
+    prior2 = prior.pp(prior[TF.name,TG.name],expr)
+    if (nrow(prior2)!=length(TF.name)){
+      TFnotExp = setdiff(TF.name,rownames(prior2))
+      prior2 = rbind(prior2,prior[TFnotExp,])
+      prior2 = prior2[order(rownames(prior2)),]
+    }
+    P = prior2
     TF.name = rownames(P)
     TG.name = colnames(P)
   }else{

@@ -8,6 +8,7 @@ TIGER(
   expr,
   prior,
   method = "VB",
+  TFexpressed = TRUE,
   signed = TRUE,
   baseline = TRUE,
   psis_loo = FALSE,
@@ -30,6 +31,8 @@ and columns are sampeles (cells).}
 and columns target genes.}
 
 \item{method}{Method used for Bayesian inference. "VB" or "MCMC". Defaults to "VB".}
+
+\item{TFexpressed}{TF mRNA needs to be expressed or not. Defaults to TRUE.}
 
 \item{signed}{Prior network is signed or not. Defaults to TRUE.}
 
