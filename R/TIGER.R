@@ -74,7 +74,9 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
     prior2 = prior.pp(prior[TF.name,TG.name],expr)
     if (nrow(prior2)!=length(TF.name)){
       TFnotExp = setdiff(TF.name,rownames(prior2))
-      prior2 = rbind(prior2,prior[TFnotExp,colnames(prior2),drop=F])
+      TFnotExpEdge = prior[TFnotExp,colnames(prior2),drop=F]
+      TFnotExpEdge[TFnotExpEdge==1] = 1e-6
+      prior2 = rbind(prior2,TFnotExpEdge)
       prior2 = prior2[order(rownames(prior2)),]
       prior2 = prior2[rowSums(prior2!=0)>0,]  # remove all zero TFs
     }
