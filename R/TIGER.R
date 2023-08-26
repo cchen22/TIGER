@@ -54,9 +54,10 @@
 #' @examples
 #' TIGER(expr,prior)
 TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
-                     signed=TRUE,baseline=TRUE,psis_loo = FALSE,
-                     seed=123,out_path=NULL,out_size = 300,
-                     a_sigma=1,b_sigma=1,a_alpha=1,b_alpha=1,sigmaZ=10,sigmaB=1){
+                 signed=TRUE,baseline=TRUE,psis_loo = FALSE,
+                 seed=123,out_path=NULL,out_size = 300,
+                 a_sigma=1,b_sigma=1,a_alpha=1,b_alpha=1,
+                 sigmaZ=10,sigmaB=1){
   # check data
   sample.name = colnames(expr)
   if (TFexpressed){
@@ -134,6 +135,8 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   }
 
   #3. posterior distributions
+  ## release unused memory
+  gc()
 
   ## point summary of W
   W_sample = fit$draws("W",format = "draws_matrix") ## matrix, each row is a sample of vectorized matrix
@@ -142,11 +145,15 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   W_pos2 = rep(0,ncol(W_sample))
   W_pos2[one_ind] = W_pos
   W_pos = matrix(W_pos2,nrow = n_genes,ncol = n_TFs) ## convert to matrix genes*TFs
+  rm(W_sample)
+  gc()
 
   ## point summary of Z
   Z_sample = fit$draws("Z",format = "draws_matrix")
   Z_pos = colMeans(Z_sample) ## average Z
   Z_pos = matrix(Z_pos,nrow = n_TFs,ncol = n_samples) ## convert to matrix TFs*samples
+  rm(Z_sample)
+  gc()
 
   ## rescale
   IZ = Z_pos*(apply(abs(W_pos),2,sum)/apply(W_pos!=0,2,sum))
@@ -173,7 +180,8 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
 
   # output
   tiger_fit = list(W = IW, Z = IZ,
-                   TF.name = TF.name, TG.name = TG.name, sample.name = sample.name,
+                   TF.name = TF.name, TG.name = TG.name,
+                   sample.name = sample.name,
                    loocv = loocv, elpd_loo=elpd_loo)
 
   return(tiger_fit)
