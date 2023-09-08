@@ -138,14 +138,21 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   ## release unused memory
   gc()
 
-  ## point summary of W
-  W_sample = fit$draws("W",format = "draws_matrix") ## matrix, each row is a sample of vectorized matrix
-  one_ind = which(colSums(W_sample==0)<nrow(W_sample)) ## index for all-zero columns
-  W_pos = colMeans(W_sample[,one_ind]) ## average W
-  W_pos2 = rep(0,ncol(W_sample))
-  W_pos2[one_ind] = W_pos
-  W_pos = matrix(W_pos2,nrow = n_genes,ncol = n_TFs) ## convert to matrix genes*TFs
-  rm(W_sample)
+  ## point summary of W non-zero elements
+  W_pos = rep(0,n_all)
+  if (signed){
+    W_negs = colMeans(fit$draws("W_negs",format = "draws_matrix"))
+    W_poss = colMeans(fit$draws("W_poss",format = "draws_matrix"))
+    W_blur = colMeans(fit$draws("W_blur",format = "draws_matrix"))
+    W_pos[P_negs] = W_negs
+    W_pos[P_poss] = W_poss
+    W_pos[P_blur] = W_blur
+  }else{
+    W_ones = colMeans(fit$draws("W_ones",format = "draws_matrix"))
+    W_pos[P_ones] = W_ones
+  }
+
+  W_pos = matrix(W_pos,nrow = n_genes,ncol = n_TFs)
   gc()
 
   ## point summary of Z
@@ -306,7 +313,7 @@ prior.pp = function(prior,expr){
 
 # stan model, conditional likelihood
 TIGER_C <-
-'
+  '
 data {
   int<lower=0> n_genes;                       // Number of genes
   int<lower=0> n_samples;                     // Number of samples
@@ -357,17 +364,22 @@ parameters {
 transformed parameters {
   matrix[n_genes, n_TFs] W;                   // Regulatory netwrok W
   vector[n_all] W_vec;                        // Regulatory vector W_vec
+  vector[n_negs] W_negs;
+  vector[n_poss] W_poss;
+  vector[n_blur] W_blur;
+  vector[n_ones] W_ones;
 
   W_vec[P_zero]=rep_vector(0,n_zero);
+
   if (sign) {
-    vector[n_negs] W_negs = beta3.*sqrt(alpha3);  // Regulatory network negative edge weight
-    vector[n_poss] W_poss = beta2.*sqrt(alpha2);  // Regulatory network positive edge weight
-    vector[n_blur] W_blur = beta0.*sqrt(alpha0);  // Regulatory network blurred edge weight
+    W_negs = beta3.*sqrt(alpha3);  // Regulatory network negative edge weight
+    W_poss = beta2.*sqrt(alpha2);  // Regulatory network positive edge weight
+    W_blur = beta0.*sqrt(alpha0);  // Regulatory network blurred edge weight
     W_vec[P_negs]=W_negs;
     W_vec[P_poss]=W_poss;
     W_vec[P_blur]=W_blur;
   }else{
-    vector[n_ones] W_ones = beta1.*sqrt(alpha1);  // Regulatory network non-zero edge weight
+    W_ones = beta1.*sqrt(alpha1);  // Regulatory network non-zero edge weight
     W_vec[P_ones]=W_ones;
   }
   W = to_matrix(W_vec,n_genes,n_TFs); // by column
