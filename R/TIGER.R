@@ -135,31 +135,30 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   }
 
   #3. posterior distributions
-  ## release unused memory
-  gc()
 
   ## point summary of W non-zero elements
+  print("Draw sample from W matrix...")
   W_pos = rep(0,n_all)
   if (signed){
-    W_negs = colMeans(fit$draws("W_negs",format = "draws_matrix"))
-    W_poss = colMeans(fit$draws("W_poss",format = "draws_matrix"))
-    W_blur = colMeans(fit$draws("W_blur",format = "draws_matrix"))
+    W_negs = fit$summary("W_negs","mean")$mean
+    W_poss = fit$summary("W_poss","mean")$mean
+    W_blur = fit$summary("W_blur","mean")$mean
     W_pos[P_negs] = W_negs
     W_pos[P_poss] = W_poss
     W_pos[P_blur] = W_blur
+    rm(list = c("W_poss","W_negs","W_blur"))
   }else{
-    W_ones = colMeans(fit$draws("W_ones",format = "draws_matrix"))
+    W_ones = fit$summary("W_ones","mean")$mean
     W_pos[P_ones] = W_ones
+    rm(list = c("W_ones"))
   }
-
   W_pos = matrix(W_pos,nrow = n_genes,ncol = n_TFs)
   gc()
 
   ## point summary of Z
-  Z_sample = fit$draws("Z",format = "draws_matrix")
-  Z_pos = colMeans(Z_sample) ## average Z
+  print("Draw sample from Z matrix...")
+  Z_pos = fit$summary("Z","mean")$mean
   Z_pos = matrix(Z_pos,nrow = n_TFs,ncol = n_samples) ## convert to matrix TFs*samples
-  rm(Z_sample)
   gc()
 
   ## rescale
