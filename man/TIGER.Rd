@@ -20,7 +20,8 @@ TIGER(
   a_alpha = 1,
   b_alpha = 1,
   sigmaZ = 10,
-  sigmaB = 1
+  sigmaB = 1,
+  tol = 0.005
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ validation to check model fitting or not. Defaults to FALSE.}
 \item{sigmaZ}{Standard deviation of TF activity Z. Default = 10.}
 
 \item{sigmaB}{Standard deviation of baseline term. Default = 1.}
+
+\item{tol}{Convergence tolerance on ELBO.. Default = 0.005.}
 }
 \value{
 A TIGER list object.

@@ -40,6 +40,7 @@
 #' @param b_alpha Hyperparameter of edge weight W. Default = 1.
 #' @param sigmaZ Standard deviation of TF activity Z. Default = 10.
 #' @param sigmaB Standard deviation of baseline term. Default = 1.
+#' @param tol Convergence tolerance on ELBO.. Default = 0.005.
 #'
 #' @return A TIGER list object.
 #' * W is the estimated regulatory network, but different from prior network,
@@ -57,7 +58,7 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
                  signed=TRUE,baseline=TRUE,psis_loo = FALSE,
                  seed=123,out_path=NULL,out_size = 300,
                  a_sigma=1,b_sigma=1,a_alpha=1,b_alpha=1,
-                 sigmaZ=10,sigmaB=1){
+                 sigmaZ=10,sigmaB=1,tol = 0.005){
   # check data
   sample.name = colnames(expr)
   if (TFexpressed){
@@ -123,7 +124,7 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   #2. run VB or MCMC
   if (method=="VB"){
     fit <- mod$variational(data = data_to_model, algorithm = "meanfield",seed = seed,
-                           iter = 50000, tol_rel_obj = 0.005,output_samples = out_size)
+                           iter = 50000, tol_rel_obj = tol,output_samples = out_size)
   }else if (method=="MCMC"){
     fit <- mod$sample(data = data_to_model,chains=1,seed = seed,max_treedepth=10,
                       iter_warmup = 1000,iter_sampling=out_size,adapt_delta=0.99)
