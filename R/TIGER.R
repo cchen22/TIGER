@@ -148,7 +148,7 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
 
     W_poss = fit$summary("W_poss","mean")$mean
     W_pos[P_poss] = W_poss
-    rm("W_negs")
+    rm("W_poss")
     gc()
 
     W_blur = fit$summary("W_blur","mean")$mean
