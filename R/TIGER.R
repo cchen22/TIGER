@@ -133,6 +133,7 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   ## optional: save stan object
   if (!is.null(out_path)){
     fit$save_object(paste0(out_path,"fit_",seed,".rds"))
+    fit$save_output_files(out_path)
   }
 
   #3. posterior distributions
@@ -373,40 +374,42 @@ parameters {
 }
 
 transformed parameters {
-  matrix[n_genes, n_TFs] W;                   // Regulatory netwrok W
-  vector[n_all] W_vec;                        // Regulatory vector W_vec
-  vector[n_negs] W_negs;
-  vector[n_poss] W_poss;
-  vector[n_blur] W_blur;
-  vector[n_ones] W_ones;
-
-  W_vec[P_zero]=rep_vector(0,n_zero);
+  vector[sign ? n_negs : 0] W_negs;
+  vector[sign ? n_poss : 0] W_poss;
+  vector[sign ? n_blur : 0] W_blur;
+  vector[sign ? 0 : n_ones] W_ones;
 
   if (sign) {
     W_negs = beta3.*sqrt(alpha3);  // Regulatory network negative edge weight
     W_poss = beta2.*sqrt(alpha2);  // Regulatory network positive edge weight
     W_blur = beta0.*sqrt(alpha0);  // Regulatory network blurred edge weight
+
+  }else{
+    W_ones = beta1.*sqrt(alpha1);  // Regulatory network non-zero edge weight
+
+  }
+}
+
+model {
+  // local parameters
+  vector[n_all] W_vec;                        // Regulatory vector W_vec
+  W_vec[P_zero]=rep_vector(0,n_zero);
+  if (sign){
     W_vec[P_negs]=W_negs;
     W_vec[P_poss]=W_poss;
     W_vec[P_blur]=W_blur;
   }else{
-    W_ones = beta1.*sqrt(alpha1);  // Regulatory network non-zero edge weight
     W_vec[P_ones]=W_ones;
   }
-  W = to_matrix(W_vec,n_genes,n_TFs); // by column
-
-  matrix[n_genes,n_samples] mu = W*Z; // mu for gene expression X
+  matrix[n_genes, n_TFs] W=to_matrix(W_vec,n_genes,n_TFs); // by column
+  matrix[n_genes,n_samples] mu=W*Z; // mu for gene expression X
   if (baseline){
-    matrix[n_genes,n_samples] mu0;    // baseline
-    mu0 = rep_matrix(b0,n_samples);
-    mu =  mu + mu0;
+    matrix[n_genes,n_samples] mu0=rep_matrix(b0,n_samples);
+    mu=mu + mu0;
   }
-
   vector[n_genes*n_samples] X_mu = to_vector(mu);
   vector[n_genes*n_samples] X_sigma = to_vector(rep_matrix(sqrt(sigma2),n_samples));
-}
 
-model {
   // priors
   sigma2 ~ inv_gamma(a_sigma,b_sigma);
 
@@ -437,10 +440,28 @@ model {
 
 }
 
-
 generated quantities {
-  vector[n_genes*n_samples] log_lik;
+  vector[psis_loo ? n_genes*n_samples : 0] log_lik;
   if (psis_loo){
+    // redefine X_mu, X_sigma; this is ugly because X_mu, X_sigma are temp variables
+    vector[n_all] W_vec;                        // Regulatory vector W_vec
+    W_vec[P_zero]=rep_vector(0,n_zero);
+    if (sign){
+      W_vec[P_negs]=W_negs;
+      W_vec[P_poss]=W_poss;
+      W_vec[P_blur]=W_blur;
+    }else{
+      W_vec[P_ones]=W_ones;
+    }
+    matrix[n_genes, n_TFs] W=to_matrix(W_vec,n_genes,n_TFs); // by column
+    matrix[n_genes,n_samples] mu=W*Z; // mu for gene expression X
+    if (baseline){
+      matrix[n_genes,n_samples] mu0=rep_matrix(b0,n_samples);
+      mu=mu + mu0;
+    }
+    vector[n_genes*n_samples] X_mu = to_vector(mu);
+    vector[n_genes*n_samples] X_sigma = to_vector(rep_matrix(sqrt(sigma2),n_samples));
+
     // leave one element out
     for (i in 1:n_genes*n_samples){
       log_lik[i] = normal_lpdf(X_vec[i]|X_mu[i],X_sigma[i]);
