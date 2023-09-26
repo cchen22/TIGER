@@ -146,20 +146,27 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
   print("Draw sample from W matrix...")
   W_pos = rep(0,n_all)
   if (signed){
-    W_negs = fit$summary("W_negs","mean")$mean
-    W_pos[P_negs] = W_negs
-    rm("W_negs")
-    gc()
+    if (n_negs!=0){
+      W_negs = fit$summary("W_negs","mean")$mean
+      W_pos[P_negs] = W_negs
+      rm("W_negs")
+      gc()
+    }
 
-    W_poss = fit$summary("W_poss","mean")$mean
-    W_pos[P_poss] = W_poss
-    rm("W_poss")
-    gc()
+    if (n_poss!=0){
+      W_poss = fit$summary("W_poss","mean")$mean
+      W_pos[P_poss] = W_poss
+      rm("W_poss")
+      gc()
 
-    W_blur = fit$summary("W_blur","mean")$mean
-    W_pos[P_blur] = W_blur
-    rm("W_blur")
-    gc()
+    }
+
+    if (n_blur!=0){
+      W_blur = fit$summary("W_blur","mean")$mean
+      W_pos[P_blur] = W_blur
+      rm("W_blur")
+      gc()
+    }
 
   }else{
     W_ones = fit$summary("W_ones","mean")$mean
