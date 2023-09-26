@@ -73,18 +73,22 @@ TIGER = function(expr,prior,method="VB",TFexpressed = TRUE,
 
   #0. prepare stan input
   if (signed){
-    prior2 = prior.pp(prior[TF.name,TG.name],expr)
-    if (nrow(prior2)!=length(TF.name)){
-      TFnotExp = setdiff(TF.name,rownames(prior2))
-      TFnotExpEdge = prior[TFnotExp,colnames(prior2),drop=F]
-      TFnotExpEdge[TFnotExpEdge==1] = 1e-6
-      prior2 = rbind(prior2,TFnotExpEdge)
-      prior2 = prior2[order(rownames(prior2)),]
-      prior2 = prior2[rowSums(prior2!=0)>0,]  # remove all zero TFs
+    if (length(intersect(TG.name,TF.name))!=0){
+      prior2 = prior.pp(prior[TF.name,TG.name],expr)
+      if (nrow(prior2)!=length(TF.name)){
+        TFnotExp = setdiff(TF.name,rownames(prior2))
+        TFnotExpEdge = prior[TFnotExp,colnames(prior2),drop=F]
+        TFnotExpEdge[TFnotExpEdge==1] = 1e-6
+        prior2 = rbind(prior2,TFnotExpEdge)
+        prior2 = prior2[order(rownames(prior2)),]
+        prior2 = prior2[rowSums(prior2!=0)>0,]  # remove all zero TFs
+      }
+      P = prior2
+      TF.name = rownames(P)
+      TG.name = colnames(P)
+    }else{
+      P = prior[TF.name,TG.name]
     }
-    P = prior2
-    TF.name = rownames(P)
-    TG.name = colnames(P)
   }else{
     P = prior[TF.name,TG.name]
   }
